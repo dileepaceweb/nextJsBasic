@@ -1,44 +1,41 @@
 import { connectDb } from "@/helper/db";
+import { User } from "@/models/user";
 import { NextResponse } from "next/server";
+
 connectDb();
-export function GET(request){
-    const users=[
-        {
-        name:"Dileep Kumar",
-        phone:"91828737838",
-        course:"Java"
-    },
-    {
-        name:"Sonu Kumar",
-        phone:"91828755838",
-        course:"Js"
-    },
 
-{
-    name:"Monu Kumar",
-    phone:"9182873799",
-    course:"C"
-}];
-return NextResponse.json(users);
+// create User
+export async function POST(request) {
+  try {
+    const { name, email, password, about, profileURL } = await request.json();
+    //console.log({ name, email, password, about, profileURL });
 
+    const user = new User({
+      name,
+      email,
+      password,
+      about,
+      profileURL
+    });
 
-}
+    await user.save();
+    console.log("user is created");
 
-export function POST(){
-
-}
-
-export function DELETE(request){
-  console.log("Delete API called");
-  return NextResponse.json({
-    message:"Deleted !!",
-    status:true,
+    return NextResponse.json(user);
+  } catch (error) {
+    console.error("Error creating user:", error);
   }
-  ,
-  {
-    status:201,statusText:"Hey changed  text"
-  });
 }
-export function PUT(){
 
+export async function GET(request) {
+  try {
+    const users = await User.find();
+    //console.log(users);
+    return NextResponse.json(users);
+
+    
+  } catch (error) {
+    console.error("Error fetching users:", error);
+
+  }
 }
